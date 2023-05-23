@@ -16,13 +16,15 @@ app.get('/pack', async (req, res, next) => {
   const unloading = req.params.unloading;
   const fine = req.params.fine;
   const ts = req.params.ts;
-  const resultWindow = await axios.get(`http//localhost:5000/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
-  const resultSplit = await axios.get(`http//localhost:5005/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  const responseWindow = await axios.get(`http//localhost:5000/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  const responseSplit = await axios.get(`http//localhost:5005/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  const windows = await responseWindow.data;
+  const split = await responseSplit.data;
 
-  Promise.all(resultWindow, resultSplit).then(data => res.send({
-    window: data[0], 
-    split: data[1],
-  }));
+  res.send({
+    windows: windows,
+    split: split,
+  })
 });
 
 app.use('/api', require('./routes/api.route'));
