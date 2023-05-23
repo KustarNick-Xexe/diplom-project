@@ -16,14 +16,14 @@ app.get('/pack', async (req, res, next) => {
   const unloading = req.params.unloading;
   const fine = req.params.fine;
   const ts = req.params.ts;
-  const responseWindow = await axios.get(`http//localhost:5000/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
-  const responseSplit = await axios.get(`http//localhost:5005/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  const responseWindow = await axios.get(`http://127.0.0.1:5000/routes_with_time_window?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  /* const responseSplit = await axios.get(`http//localhost:5005/routes_with_splits?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`); */
   const windows = await responseWindow.data;
-  const split = await responseSplit.data;
+  /* const split = await responseSplit.data; */
 
   res.send({
     windows: windows,
-    split: split,
+    //split: split,
   })
 });
 
