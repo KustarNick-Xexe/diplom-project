@@ -1,6 +1,7 @@
 const express = require('express');
 const createError = require('http-errors');
 const morgan = require('morgan');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -8,8 +9,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
-app.get('/', async (req, res, next) => {
-  res.send({ message: 'Awesome it works 🐻' });
+app.get('/pack', async (req, res, next) => {
+  const speed = req.params.speed;
+  const consumption = req.params.consumption;
+  const cost = req.params.cost;
+  const unloading = req.params.unloading;
+  const fine = req.params.fine;
+  const ts = req.params.ts;
+  const resultWindow = await axios.get(`http//localhost:5000/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+  const resultSplit = await axios.get(`http//localhost:5005/routes_with_timewindow?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
+
+  Promise.all(resultWindow, resultSplit).then(data => res.send({
+    window: data[0], 
+    split: data[1],
+  }));
 });
 
 app.use('/api', require('./routes/api.route'));
