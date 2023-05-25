@@ -25,8 +25,28 @@ router.get('/cargos/:id', async (req, res, next) => {
 
 router.post('/cargos', async (req, res, next) => {
   try {
-    const cargo = await prisma.cargo.create({ data: req.body });
-    res.json(cargo);
+    const id = parseInt(req.body.idClient);
+    await prisma.cargo.create({ data: req.body });
+    const client = await prisma.client.findUnique({
+      where: { id: id },
+      include: { cargos: true },
+    });
+
+    if (client) {
+      const demand = client.cargos.reduce((sum, cargo) => sum + cargo.weight, 0);
+      await prisma.client.update({
+        where: { id: parseInt(client.id) },
+        data: { demand: demand }
+      });
+
+      const updatedClient = await prisma.client.findUnique({
+        where: { id: id },
+        include: { cargos: true },
+      });
+      res.json({ ...updatedClient, demand: demand });
+    } else {
+      res.status(404).json({ message: "Client not found" });
+    }
   } catch (error) {
     next(error);
   }
@@ -35,7 +55,38 @@ router.post('/cargos', async (req, res, next) => {
 router.put('/cargos/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const cargo = await prisma.cargo.update({ where: { id: parseInt(id) }, data: req.body });
+
+    const cargo = await prisma.cargo.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    const client = await prisma.client.findUnique({
+      where: { id: cargo.idClient },
+      include: { cargos: true },
+    });
+
+    if (client) {
+      const oldWeight = cargo.weight;
+
+      const newCargo = await prisma.cargo.update({ where: { id: parseInt(id) }, data: req.body });
+
+      const demand = client.demand - oldWeight + newCargo.weight;
+
+      await prisma.client.update({
+        where: { id: client.id },
+        data: { demand: demand, }
+      });
+
+      const updatedClient = await prisma.client.findUnique({
+        where: { id: client.id },
+        include: { cargos: true },
+      });
+
+      res.json({ ...updatedClient, demand: demand });
+    } else {
+      res.status(404).json({ message: "Client not found" });
+    }
+
     res.json(cargo);
   } catch (error) {
     next(error);
@@ -45,12 +96,43 @@ router.put('/cargos/:id', async (req, res, next) => {
 router.delete('/cargos/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const cargo = await prisma.cargo.delete({ where: { id: parseInt(id) } });
-    res.json(cargo);
+    const cargo = await prisma.cargo.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!cargo) {
+      return res.status(404).json({ message: "Cargo not found" });
+    }
+
+    const client = await prisma.client.findUnique({
+      where: { id: cargo.idClient },
+      include: { cargos: true },
+    });
+
+    if (client) {
+      const demand = client.demand - cargo.weight;
+
+      await prisma.cargo.delete({ where: { id: parseInt(id) } });
+
+      await prisma.client.update({
+        where: { id: client.id },
+        data: { demand: demand, }
+      });
+
+      const updatedClient = await prisma.client.findUnique({
+        where: { id: client.id },
+        include: { cargos: true },
+      });
+
+      res.json({ ...updatedClient, demand: demand });
+    } else {
+      res.status(404).json({ message: "Client not found" });
+    }
   } catch (error) {
     next(error);
   }
 });
+
 
 //Роуты для ТС ----------------------------------------------------------------
 router.get('/vehicles', async (req, res, next) => {

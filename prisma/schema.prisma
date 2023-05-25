@@ -13,7 +13,7 @@ model Cargo {
   length   Float
   height   Float
   weight   Float
-  plans    Plan[] // use plural form for a one-to-many relationship
+  plans    Plan[]
   idClient Int
   client   Client  @relation(fields: [idClient], references: [id])
 }
@@ -32,7 +32,8 @@ model Client {
   address     String?
   coordX      Float
   coordY      Float
-  time_window DateTime?
+  openWindow  String?
+  closeWindow String?
   demand      Float
   cargos      Cargo[]  
   distance1   Distance[] @relation("Client1")
