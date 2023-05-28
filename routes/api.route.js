@@ -235,7 +235,7 @@ router.delete('/clients/:id', async (req, res, next) => {
 //Роуты для планов ----------------------------------------------------------------
 router.get('/plans', async (req, res, next) => {
   try {
-    const plans = await prisma.plan.findMany({ include: { cargo: true, vehicle: true } });
+    const plans = await prisma.plan.findMany({ include: { vehicle: true } });
     res.json(plans);
   } catch (error) {
     next(error);
@@ -245,7 +245,7 @@ router.get('/plans', async (req, res, next) => {
 router.get('/plans/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const plan = await prisma.plan.findUnique({ where: { id: parseInt(id) }, include: { cargo: true, vehicle: true } });
+    const plan = await prisma.plan.findUnique({ where: { id: parseInt(id) }, include: { vehicle: true } });
     res.json(plan);
   } catch (error) {
     next(error);
@@ -254,7 +254,7 @@ router.get('/plans/:id', async (req, res, next) => {
 
 router.post('/plans', async (req, res, next) => {
   try {
-    const plan = await prisma.plan.create({ data: req.body, include: { cargo: true, vehicle: true } });
+    const plan = await prisma.plan.create({ data: req.body, include: { vehicle: true } });
     res.json(plan);
   } catch (error) {
     next(error);
@@ -264,7 +264,7 @@ router.post('/plans', async (req, res, next) => {
 router.put('/plans/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const plan = await prisma.plan.update({ where: { id: parseInt(id) }, data: req.body, include: { cargo: true, vehicle: true } });
+    const plan = await prisma.plan.update({ where: { id: parseInt(id) }, data: req.body, include: { vehicle: true } });
     res.json(plan);
   } catch (error) {
     next(error);
@@ -276,55 +276,6 @@ router.delete('/plans/:id', async (req, res, next) => {
     const { id } = req.params;
     const plan = await prisma.plan.delete({ where: { id: parseInt(id) }, include: { cargo: true, vehicle: true } });
     res.json(plan);
-  } catch (error) {
-    next(error);
-  }
-});
-
-//Роуты для путей ----------------------------------------------------------------
-router.get('/distances', async (req, res, next) => {
-  try {
-    const distances = await prisma.distance.findMany({ include: { client1: true, client2: true } });
-    res.json(distances);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/distances/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const distance = await prisma.distance.findUnique({ where: { id: parseInt(id) }, include: { client1: true, client2: true } });
-    res.json(distance);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post('/distances', async (req, res, next) => {
-  try {
-    const distance = await prisma.distance.create({ data: req.body, include: { client1: true, client2: true } });
-    res.json(distance);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.put('/distances/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const distance = await prisma.distance.update({ where: { id: parseInt(id) }, data: req.body, include: { client1: true, client2: true } });
-    res.json(distance);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/distances/:id', async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const distance = await prisma.distance.delete({ where: { id: parseInt(id) }, include: { client1: true, client2: true } });
-    res.json(distance);
   } catch (error) {
     next(error);
   }

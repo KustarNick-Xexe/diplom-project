@@ -13,7 +13,6 @@ model Cargo {
   length   Float
   height   Float
   weight   Float
-  plans    Plan[]
   idClient Int
   client   Client  @relation(fields: [idClient], references: [id])
 }
@@ -36,26 +35,11 @@ model Client {
   closeWindow String?
   demand      Float
   cargos      Cargo[]  
-  distance1   Distance[] @relation("Client1")
-  distance2   Distance[] @relation("Client2")
 }
 
 model Plan {
   id        Int     @id @default(autoincrement())
-  coordX    Float
-  coordY    Float
-  coordZ    Float
+  plan      String
   idVehicle Int
-  idCargo   Int
-  cargo     Cargo   @relation(fields: [idCargo], references: [id])
   vehicle   Vehicle @relation(fields: [idVehicle], references: [id])
-}
-
-model Distance {
-  id       Int    @id @default(autoincrement())
-  idCl1    Int
-  idCl2    Int
-  distance Float
-  client1  Client @relation("Client1", fields: [idCl1], references: [id])
-  client2  Client @relation("Client2", fields: [idCl2], references: [id])
 }
