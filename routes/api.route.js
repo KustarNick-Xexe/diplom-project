@@ -281,5 +281,72 @@ router.delete('/plans/:id', async (req, res, next) => {
   }
 });
 
+router.delete('/plans', async (req, res, next) => {
+  try {
+    const deleteManyPlans = await prisma.plan.deleteMany();
+    res.json({ message: `Deleted ${deleteManyPlans.count} plans` });
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Роуты для планов2 ----------------------------------------------------------------
+router.get('/plans2', async (req, res, next) => {
+  try {
+    const plans = await prisma.plan2.findMany({ include: { vehicle: true } });
+    res.json(plans);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/plans2/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const plan = await prisma.plan2.findUnique({ where: { id: parseInt(id) }, include: { vehicle: true } });
+    res.json(plan);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/plans2', async (req, res, next) => {
+  try {
+    const plan = await prisma.plan2.create({ data: req.body, include: { vehicle: true } });
+    res.json(plan);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/plans2/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const plan = await prisma.plan2.update({ where: { id: parseInt(id) }, data: req.body, include: { vehicle: true } });
+    res.json(plan);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/plans2/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const plan = await prisma.plan2.delete({ where: { id: parseInt(id) }, include: { cargo: true, vehicle: true } });
+    res.json(plan);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/plans2', async (req, res, next) => {
+  try {
+    const deleteManyPlans = await prisma.plan2.deleteMany();
+    res.json({ message: `Deleted ${deleteManyPlans.count} plans` });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
 

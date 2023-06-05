@@ -17,18 +17,21 @@ app.get('/pack', async (req, res, next) => {
   const cost = req.query.cost;
   const unloading = req.query.unloading;
   const fine = req.query.fine;
-  const ts = req.query.ts;
-  console.log(speed, consumption, cost, unloading, fine, ts);
-  //const responseWindow = await axios.get(`http://127.0.0.1:5000/routes_with_time_window?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`);
-  /* const responseSplit = await axios.get(`http//localhost:5005/routes_with_splits?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}&ts=${ts}`); */
-  //const windows = await responseWindow.data;
-  /* const split = await responseSplit.data; */
-
+  console.log(speed, consumption, cost, unloading, fine);
+  await axios.delete('http://localhost:3007/api/plans');
+  await axios.delete('http://localhost:3007/api/plans2');
+  const responseSplit = await axios.get(`http://127.0.0.1:5005/routes_with_splits?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}`);
+  const responseWindow = await axios.get(`http://127.0.0.1:5000/routes_with_time_window?speed=${speed}&consumption=${consumption}&cost=${cost}&unloading=${unloading}&fine=${fine}`);
+  const windows = responseWindow.data;
+  const split = responseSplit.data;
+  console.log(windows.price, split.price)
   res.send({
-    windows: {"routes": ["0-5-3-2-4-1-0", "0-1-0", "0-1-0", "0-1-0"], "vehicle": ["1", "2", "3", "4"], "price": "10000"},
-    split: {"routes": ["0-5-3-2-4-1-0", "0-1-0", "0-1-0", "0-1-0"], "vehicle": ["1", "2", "3", "4"], "price": "10000"},
+    windows: windows,
+    split: split,
   })
 });
+
+
 
 app.use('/api', require('./routes/api.route'));
 

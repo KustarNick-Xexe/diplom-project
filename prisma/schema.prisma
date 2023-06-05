@@ -13,6 +13,7 @@ model Cargo {
   length   Float
   height   Float
   weight   Float
+  fragile  Boolean @default(false)
   idClient Int
   client   Client  @relation(fields: [idClient], references: [id])
 }
@@ -23,7 +24,8 @@ model Vehicle {
   length Int
   height Int
   weight Int
-  plans  Plan[] // use plural form for a one-to-many relationship
+  plans  Plan[]
+  plans2  Plan2[]
 }
 
 model Client {
@@ -38,6 +40,13 @@ model Client {
 }
 
 model Plan {
+  id        Int     @id @default(autoincrement())
+  plan      String
+  idVehicle Int
+  vehicle   Vehicle @relation(fields: [idVehicle], references: [id])
+}
+
+model Plan2 {
   id        Int     @id @default(autoincrement())
   plan      String
   idVehicle Int
