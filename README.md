@@ -21,3 +21,5 @@
 [^1]: Предполагается, что вы используете VS Code и npm
 
 По всем вопросам обращаться _salikhcomhd@gmail.com_
+
+Взаимодействие алгоритмов: https://cloud.mail.ru/public/8uN4/6HZQgQHtZ
